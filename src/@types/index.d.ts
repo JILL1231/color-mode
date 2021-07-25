@@ -1,0 +1,4 @@
+// diffusion
+export interface DiffusionProps {
+  
+}
