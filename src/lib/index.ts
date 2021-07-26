@@ -1,4 +1,4 @@
-import { getSelections } from './utils';
+import { getSelections, getDressed } from './utils';
 import colorLib from './color';
 
-export { getSelections, colorLib };
+export { getSelections, getDressed, colorLib };

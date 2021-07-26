@@ -32,16 +32,15 @@ function activate(context) {
                             const range = sel.isEmpty
                                 ? (editor === null || editor === void 0 ? void 0 : editor.document.getWordRangeAtPosition(sel.start)) || sel
                                 : sel;
-                            const toType = res === null || res === void 0 ? void 0 : res.toLowerCase();
+                            const toType = (res === null || res === void 0 ? void 0 : res.toLowerCase()) || 'hex';
                             // 更换前后的色彩模式一致，则返回
                             if (isColorType === toType) {
                                 return;
                             }
                             const initArgs = lib_1.colorLib.color.decode(selectText);
-                            console.log("🚀 ~ file: extension.ts ~ line 41 ~ editor?.selections.forEach ~ initArgs", initArgs);
                             // @ts-ignore
                             const colorFormat = lib_1.colorLib.color[`${isColorType}2${toType}`](initArgs);
-                            const result = selectText.replace(selectText, `${toType}(${colorFormat})`);
+                            const result = selectText.replace(selectText, lib_1.getDressed(toType, colorFormat));
                             editBuilder.replace(range, result);
                         });
                     });

@@ -27,13 +27,17 @@ const isColor = (color) => {
     const type = result && color.split('(')[0] || '';
     return type === 'rgba' ? 'rgb' : type;
 };
+const isKelvin = (color) => {
+    const result = /^\d{0,5}(k|K)$/.test(color);
+    return result ? 'kelvin' : '';
+};
 const isDefault = (color) => {
     const result = getDefaultHex(color);
     return result ? 'hex' : '';
 };
 const isColorType = (color) => {
     color = color.replace(/\'|\"/g, '');
-    return isHex(color) || isColor(color) || isDefault(color);
+    return isHex(color) || isColor(color) || isDefault(color) || isKelvin(color);
 };
 // 处理字符串长度，少则补0，多则裁剪
 const parse = (d, len = 2) => {
@@ -78,15 +82,15 @@ class Color {
     decode(color) {
         let rgb;
         // 色温
-        if (/^kelvin\(/.test(color)) {
-            return [color.split('(')[1].split(')')[0]];
+        if (isKelvin(color)) {
+            return color.slice(0, color.length - 1);
         }
         // rgba格式
         if (/^(rgba?|hsb|hsv|hsl|yuv)\(/.test(color)) {
-            const matcher = color.match(/(rgba?|hsb|hsv|hsl|yuv)\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\.\d]+))?\)/) || [];
-            rgb = [matcher[1], matcher[2], matcher[3]].map(item => parseInt(item));
-            if (matcher[4] !== undefined) {
-                let alpha = +matcher[4] > 1 ? 1 : +matcher[4] < 0 ? 0 : +matcher[4];
+            const [, , r, g, b, a] = color.match(/(rgba?|hsb|hsv|hsl|yuv)\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\.\d]+))?\)/) || [];
+            rgb = [Math.round(+r), Math.round(+g), Math.round(+b)];
+            if (a) {
+                let alpha = +a > 1 ? 1 : +a < 0 ? 0 : +a;
                 rgb.push(alpha);
             }
             return rgb;
@@ -222,7 +226,7 @@ class Color {
         }
         s *= 100;
         l *= 100;
-        return [h, s, l];
+        return [Math.round(h), Math.round(s), Math.round(l)];
     }
     // yuv表色系 (y:明亮度[0%-100%],u:蓝色通道[0-255],v:红色通道[0-255])
     hex2yuv([r, g, b]) {
@@ -236,9 +240,7 @@ class Color {
         let hex2str = hex.toString(16);
         const len = hex2str.length;
         if (len < 6) {
-            for (let i = 0; i < 6 - len; i++) {
-                hex2str = `0${hex}`;
-            }
+            hex2str = parse(hex2str, 6);
         }
         hex2str = hex2str.toUpperCase();
         return `#${hex2str}`;
@@ -297,7 +299,7 @@ class Color {
         }
         s *= 100;
         v *= 100;
-        return [h, s, v];
+        return [Math.round(h), Math.round(s), Math.round(v)];
     }
     /**
    * RGB的颜色值转换hsv
@@ -397,7 +399,7 @@ class Color {
         h = h.toFixed(0);
         s = s.toFixed(0);
         l = l.toFixed(0);
-        return [h, s, l];
+        return [Math.round(+h), Math.round(+s), Math.round(+l)];
     }
     /**
    * RGB转换hsl, 也是来自维基百科的公式实现
@@ -469,7 +471,7 @@ class Color {
         const y = r * 0.299 + g * 0.587 + b * 0.114;
         const u = r * -0.168736 + g * -0.331264 + b * 0.5 + 128;
         const v = r * 0.5 + g * -0.418688 + b * -0.081312 + 128;
-        return [y, u, v];
+        return [Math.round(y), Math.round(u), Math.round(v)];
     }
     /**
      * HSB to HEX\RGB\HSV\HSL\YUV\KELVIN
@@ -646,9 +648,6 @@ class Color {
         b = b < 0 ? 0 : b;
         b = b > maxIn ? maxIn : b;
         const rgb = [r, g, b];
-        if (a !== undefined) {
-            rgb.push(a > 1 ? 1 : a < 0 ? 0 : a);
-        }
         return rgb;
     }
     yuv2hsb([y, u, v]) {
@@ -734,11 +733,7 @@ class Color {
         // r = Math.floor(r);
         // g = Math.floor(g);
         // b = Math.floor(b);
-        const rgb = [r, g, b];
-        if (a !== undefined) {
-            rgb.push(a > 1 ? 1 : a < 0 ? 0 : a);
-        }
-        return rgb;
+        return [Math.round(r), Math.round(g), Math.round(b)];
     }
     /**
    * 维基百科的hsl转rgb的完整实现，变量名没有改
@@ -879,7 +874,7 @@ class Color {
                 blue = 255;
             }
         }
-        return [red, green, blue];
+        return [Math.round(red), Math.round(green), Math.round(blue)];
     }
     /**
      * A more accurate version algorithm based on a different curve fit to the
@@ -975,7 +970,7 @@ class Color {
                 blue = 255;
             }
         }
-        return [red, green, blue];
+        return [Math.round(red), Math.round(green), Math.round(blue)];
     }
     kelvin2hex(kelvin) {
         const rgb = this.kelvin2rgb(kelvin);
@@ -1035,10 +1030,6 @@ class Color {
         const rgb = this.decode(color).map(item => Math.round(item));
         const [r, g, b] = rgb.map(item => maxIn - item);
         return this.rgb2hex([r, g, b]);
-    }
-    hex2RgbString(hex, a) {
-        const rgb = this.decode(hex);
-        return toRgbString(rgb, a);
     }
     hsv2RgbString(h, s, v, a) {
         const [r, g, b, al] = this.hsv2rgb([h, s, v]);

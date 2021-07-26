@@ -9,7 +9,7 @@
 	"categories": [
 		"Other"
 	],
-	"keywords":[
+	"keywords": [
 		"color",
 		"converter",
 		"color conv",
@@ -25,7 +25,7 @@
 				"command": "color-conv.color",
 				"category": "Color",
 				"title": "color conv",
-				"icon": "./src/icon/colorIcon.png"
+				"icon": "./icon/colorIcon.png"
 			}
 		],
 		"keybindings": [
@@ -42,6 +42,13 @@
 					"when": "editorTextFocus",
 					"command": "color-conv.color",
 					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "color-conv.color",
+					"group": "navigation",
+					"when": "editorTextFocus"
 				}
 			]
 		}

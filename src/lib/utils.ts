@@ -11,5 +11,24 @@ const getSelections = (): vscode.Selection[] | null => {
   return selections;
 };
 
+const getDressed = (type: string, value: any) => {
+  let result: string = '';
+  switch (type) {
+    case 'rgb':
+    case 'hsb':
+    case 'hsv':
+    case 'hsl':
+    case 'yuv':
+      result = `${type}(${value})`;
+      break;
+    case 'kelvin':
+      result = `${value}k`;
+      break;
+    default:
+      result = value;
+      break;
+  }
+  return result;
+};
 
-export { getSelections,isColor };
+export { getSelections, getDressed };

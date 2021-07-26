@@ -1,42 +1,47 @@
 const maxIn = 255;
 
-const colorMap:{[key:string]:any} = {
-  "red":"#f00",
-  "orange":"#ffa500",
-  "yellow":"#ff0",
-  "green":"#0f0",
-  "cyan":"#0ff",
-  "blue":"#00f",
-  "violet":"#ee82ee",
-  "black":"#000",
-  "white":"#fff" 
+const colorMap: { [key: string]: any } = {
+  "red": "#f00",
+  "orange": "#ffa500",
+  "yellow": "#ff0",
+  "green": "#0f0",
+  "cyan": "#0ff",
+  "blue": "#00f",
+  "violet": "#ee82ee",
+  "black": "#000",
+  "white": "#fff"
 };
 
-const getDefaultHex = (color:string):string => {
-  const key:string = color.toLowerCase();
+const getDefaultHex = (color: string): string => {
+  const key: string = color.toLowerCase();
   return colorMap[key];
 };
 
 // 是否为有效颜色
-const isHex = (color:string):string => {
+const isHex = (color: string): string => {
   const result = /(^#[0-9A-Fa-f]{6}$)|(^#[0-9A-Fa-f]{3}$)/i.test(color);
-  return result?'hex':'';
+  return result ? 'hex' : '';
 };
-const isColor = (color:string):string => {
+const isColor = (color: string): string => {
   const result = /^(rgb|rgba|hsb|hsv|hsl|yuv|kelvin)\(/.test(color);
   // 若为rgba，修复为rgb
-  const type = result && color.split('(')[0]||''
-  return type==='rgba'? 'rgb':type;
+  const type = result && color.split('(')[0] || '';
+  return type === 'rgba' ? 'rgb' : type;
 };
 
-const isDefault = (color:string):string => {
-  const result = getDefaultHex(color)
-  return result?'hex':'';
+const isKelvin = (color: string): string => {
+  const result = /^\d{0,5}(k|K)$/.test(color);
+  return result ? 'kelvin' : '';
 };
 
-const isColorType = (color:string):string => {
-  color = color.replace(/\'|\"/g, '')
-  return isHex(color) || isColor(color) || isDefault(color);
+const isDefault = (color: string): string => {
+  const result = getDefaultHex(color);
+  return result ? 'hex' : '';
+};
+
+const isColorType = (color: string): string => {
+  color = color.replace(/\'|\"/g, '');
+  return isHex(color) || isColor(color) || isDefault(color) || isKelvin(color);
 };
 
 // 处理字符串长度，少则补0，多则裁剪
@@ -51,11 +56,11 @@ const parse = (d: string, len: number = 2) => {
 };
 
 /* eslint-disable */
-const _gcd=(a:any, b:any):any =>{
+const _gcd = (a: any, b: any): any => {
   return !b ? a : _gcd(b, a % b);
 };
 
-const getSolutionOfLinearConguenceEquation=(a:number, b:number, n:number) => {
+const getSolutionOfLinearConguenceEquation = (a: number, b: number, n: number) => {
   let d,
     k,
     r,
@@ -71,7 +76,7 @@ const getSolutionOfLinearConguenceEquation=(a:number, b:number, n:number) => {
 
 };
 
-const _hueToRgb=(p:number, q:number, t:number) =>{
+const _hueToRgb = (p: number, q: number, t: number) => {
   if (t < 0) t += 1;
   if (t > 1) t -= 1;
   if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -88,25 +93,26 @@ class Color {
   decode(color: string) {
     let rgb;
     // 色温
-    if (/^kelvin\(/.test(color)) {
-      return [color.split('(')[1].split(')')[0]];
+    if (isKelvin(color)) {
+      return color.slice(0, color.length - 1);
     }
     // rgba格式
     if (/^(rgba?|hsb|hsv|hsl|yuv)\(/.test(color)) {
-      const matcher: string[] =
+      const [, , r, g, b, a]: string[] =
         color.match(
           /(rgba?|hsb|hsv|hsl|yuv)\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\.\d]+))?\)/
         ) || [];
-      rgb = [matcher[1], matcher[2], matcher[3]].map(item => parseInt(item));
-      if (matcher[4] !== undefined) {
-        let alpha: number = +matcher[4] > 1 ? 1 : +matcher[4] < 0 ? 0 : +matcher[4];
+
+      rgb = [Math.round(+r), Math.round(+g), Math.round(+b)];
+      if (a) {
+        let alpha: number = +a > 1 ? 1 : +a < 0 ? 0 : +a;
         rgb.push(alpha);
       }
       return rgb;
     }
     // 若为默认字符串，则获取其枚举
     let isDefaultHex = getDefaultHex(color)
-    if(isDefaultHex){
+    if (isDefaultHex) {
       color = isDefaultHex;
     }
     // 十六进制格式
@@ -132,11 +138,11 @@ class Color {
    * HEX to RGB\HSB\HSV\HSL\YUV\KELVIN
    */
   // 转为三原色：(r:红[0-255],g:绿[0-255],b:蓝[0-255])
-  hex2rgb([r, g, b]:number[]) {
+  hex2rgb([r, g, b]: number[]) {
     return [r, g, b]
   }
   // 转为色温
-  hex2kelvin([r, g, b]:number[]) {
+  hex2kelvin([r, g, b]: number[]) {
     const epsilon = 0.4;
     let temperature;
     let minTemperature = 1000;
@@ -153,7 +159,7 @@ class Color {
     return temperature ? Math.round(temperature) : null;
   }
   // to hsv (h:色相[0°-360°],s:饱和度[0%-100%],v:明度[0%-100%])
-  hex2hsv([r, g, b]:number[]) {
+  hex2hsv([r, g, b]: number[]) {
 
     r /= maxIn;
     g /= maxIn;
@@ -177,14 +183,14 @@ class Color {
     else { s = C / v; }
     s *= 100;
     v *= 100;
-    return [Math.round(h),Math.round(s),Math.round(v)];
+    return [Math.round(h), Math.round(s), Math.round(v)];
   }
   // to hsb (h:色相[0°-360°],s:饱和度[0%-100%],b:亮度[0%-100%])
-  hex2hsb([r, g, b]:number[]) {
+  hex2hsb([r, g, b]: number[]) {
     return this.hex2hsv([r, g, b]);
   }
   // to hsl (h:色相[0°-360°],s:饱和度[0%-100%],l:明度[0%-100%])
-  hex2hsl([r, g, b]:number[]) {
+  hex2hsl([r, g, b]: number[]) {
     r /= maxIn;
     g /= maxIn;
     b /= maxIn;
@@ -205,24 +211,26 @@ class Color {
     else { s = d / (1 - Math.abs(2 * l - 1)); }
     s *= 100;
     l *= 100;
-    return [h, s, l];
+    return [Math.round(h), Math.round(s), Math.round(l)];
   }
   // yuv表色系 (y:明亮度[0%-100%],u:蓝色通道[0-255],v:红色通道[0-255])
-  hex2yuv([r, g, b]:number[]) {
+  hex2yuv([r, g, b]: number[]) {
     return this.rgb2yuv([r, g, b]);
   }
   /**
    * RGB to HEX\HSB\HSV\HSL\YUV\KELVIN
    */
-  rgb2hex([r, g, b]:number[]) {
+  rgb2hex([r, g, b]: number[]) {
     let hex: number = Math.round(r * 65536) + Math.round(g * 256) + Math.round(b);
     let hex2str = hex.toString(16);
     const len = hex2str.length;
-    if (len < 6) { for (let i = 0; i < 6 - len; i++) { hex2str = `0${hex}`; } }
+    if (len < 6) {
+      hex2str = parse(hex2str, 6)
+    }
     hex2str = hex2str.toUpperCase();
     return `#${hex2str}`;
   }
-  rgb2hsv([r, g, b]:number[]) {
+  rgb2hsv([r, g, b]: number[]) {
     r = parseFloat('' + r);
     g = parseFloat('' + g);
     b = parseFloat('' + b);
@@ -250,7 +258,7 @@ class Color {
     else { s = C / v; }
     s *= 100;
     v *= 100;
-    return [h, s, v];
+    return [Math.round(h), Math.round(s), Math.round(v)];
   }
   /**
  * RGB的颜色值转换hsv
@@ -265,7 +273,7 @@ class Color {
  * s - Saturation饱和度
  * v - Value表示明度
  */
-  rgbToHsv([r, g, b]:number[]) {
+  rgbToHsv([r, g, b]: number[]) {
     let h,
       s,
       v;
@@ -290,10 +298,10 @@ class Color {
 
     return { h: Math.round(h), s, v };
   };
-  rgb2hsb([r, g, b]:number[]) {
+  rgb2hsb([r, g, b]: number[]) {
     return this.rgb2hsv([r, g, b]);
   }
-  rgb2hsl([r, g, b]:number[]) {
+  rgb2hsl([r, g, b]: number[]) {
     r = parseFloat('' + r);
     g = parseFloat('' + g);
     b = parseFloat('' + b);
@@ -324,7 +332,7 @@ class Color {
     h = h.toFixed(0);
     s = s.toFixed(0);
     l = l.toFixed(0);
-    return [h, s, l];
+    return [Math.round(+h), Math.round(+s), Math.round(+l)];
   }
   /**
  * RGB转换hsl, 也是来自维基百科的公式实现
@@ -340,7 +348,7 @@ class Color {
  * s - Saturation饱和度
  * v - Lightness表示亮度
  */
-  rgbToHsl([rr, gg, bb]:number[]) { // 255, 255, 255
+  rgbToHsl([rr, gg, bb]: number[]) { // 255, 255, 255
     let r,
       g,
       b,
@@ -350,9 +358,9 @@ class Color {
       min,
       max;
 
-    r = parseFloat(''+rr) / 255;
-    g = parseFloat(''+gg) / 255;
-    b = parseFloat(''+bb) / 255;
+    r = parseFloat('' + rr) / 255;
+    g = parseFloat('' + gg) / 255;
+    b = parseFloat('' + bb) / 255;
 
     min = Math.min(r, g, b);
     max = Math.max(r, g, b);
@@ -394,47 +402,47 @@ class Color {
     }
     return temperature ? Math.round(temperature) : null;
   }
-  rgb2yuv([r, g, b]:number[]) {
+  rgb2yuv([r, g, b]: number[]) {
     const y = r * 0.299 + g * 0.587 + b * 0.114;
     const u = r * -0.168736 + g * -0.331264 + b * 0.5 + 128;
     const v = r * 0.5 + g * -0.418688 + b * -0.081312 + 128;
-    return [y, u, v];
+    return [Math.round(y), Math.round(u), Math.round(v)];
   }
 
   /**
    * HSB to HEX\RGB\HSV\HSL\YUV\KELVIN
    */
-  hsb2hex([h, s, b]:number[]) {
+  hsb2hex([h, s, b]: number[]) {
     return this.hsv2hex([h, s, b]);
   }
 
-  hsb2rgb([h, s, b]:number[]) {
+  hsb2rgb([h, s, b]: number[]) {
     return this.hsv2rgb([h, s, b]);
   }
 
-  hsb2hsv([h, s, b]:number[]) {
-    return [h,s,b];
+  hsb2hsv([h, s, b]: number[]) {
+    return [h, s, b];
   }
-  hsb2hsl([h, s, b]:number[]) {
+  hsb2hsl([h, s, b]: number[]) {
     const rgb = this.hsv2rgb([h, s, b]);
     return this.rgb2hsl(rgb);
   }
-  hsb2yuv([h, s, b]:number[]) {
+  hsb2yuv([h, s, b]: number[]) {
     const rgb = this.hsv2rgb([h, s, b]);
     return this.rgb2yuv(rgb);
   }
-  hsb2kelvin([h, s, b]:number[]) {
+  hsb2kelvin([h, s, b]: number[]) {
     const rgb = this.hsv2rgb([h, s, b]);
     return this.rgb2kelvin(rgb);
   }
   /**
    * HSV to HEX\RGB\HSB\HSL\YUV\KELVIN
    */
-  hsv2hex([h, s, v]:number[]) {
+  hsv2hex([h, s, v]: number[]) {
     const rgb = this.hsv2rgb([h, s, v]);
     return this.rgb2hex(rgb);
   }
-  hsv2rgb([h, s, v]:number[]) {
+  hsv2rgb([h, s, v]: number[]) {
     const hsb = [h, s, v].map((bit, i) => {
       let _bit = bit;
       if (_bit) { _bit = parseFloat('' + _bit); }
@@ -489,7 +497,7 @@ class Color {
  * g - green, 0~255
  * b - blue, 0~255
  */
-  hsvToRgb(h:number, s:number, v:number) {
+  hsvToRgb(h: number, s: number, v: number) {
     let r,
       g,
       b,
@@ -521,25 +529,25 @@ class Color {
 
     return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
   };
-  hsv2hsb([h, s, v]:number[]) {
-    return [h,s,v];
+  hsv2hsb([h, s, v]: number[]) {
+    return [h, s, v];
   }
-  hsv2hsl([h, s, v]:number[]) {
-    const rgb = this.hsv2rgb([h,s,v]);
+  hsv2hsl([h, s, v]: number[]) {
+    const rgb = this.hsv2rgb([h, s, v]);
     return this.rgb2hsl(rgb);
   }
-  hsv2yuv([h, s, v]:number[]) {
-    const rgb = this.hsv2rgb([h,s,v]);
+  hsv2yuv([h, s, v]: number[]) {
+    const rgb = this.hsv2rgb([h, s, v]);
     return this.rgb2yuv(rgb);
   }
-  hsv2kelvin([h, s, v]:number[]) {
-    const rgb = this.hsv2rgb([h,s,v]);
+  hsv2kelvin([h, s, v]: number[]) {
+    const rgb = this.hsv2rgb([h, s, v]);
     return this.rgb2kelvin(rgb);
   }
   /**
    * YUV to HEX\RGB\HSB\HSL\HSV\KELVIN
    */
-  yuv2hex([y, u, v]: number[]){
+  yuv2hex([y, u, v]: number[]) {
     const rgb = this.yuv2rgb([y, u, v]);
     return this.rgb2hex(rgb)
   }
@@ -570,9 +578,6 @@ class Color {
     b = b > maxIn ? maxIn : b;
 
     const rgb = [r, g, b];
-    if (a !== undefined) {
-      rgb.push(a > 1 ? 1 : a < 0 ? 0 : a);
-    }
     return rgb;
   }
   yuv2hsb([y, u, v]: number[]) {
@@ -595,7 +600,7 @@ class Color {
   /**
    * HSL to HEX\RGB\HSB\YUV\HSV\KELVIN
    */
-  hsl2rgb([h , s, l ]:number[]) {
+  hsl2rgb([h, s, l]: number[]) {
     h = parseFloat('' + h);
     s = parseFloat('' + s);
     l = parseFloat('' + l);
@@ -642,12 +647,7 @@ class Color {
     // r = Math.floor(r);
     // g = Math.floor(g);
     // b = Math.floor(b);
-
-    const rgb = [r, g, b];
-    if (a !== undefined) {
-      rgb.push(a > 1 ? 1 : a < 0 ? 0 : a);
-    }
-    return rgb;
+    return [Math.round(r), Math.round(g), Math.round(b)];
   }
   /**
  * 维基百科的hsl转rgb的完整实现，变量名没有改
@@ -663,7 +663,7 @@ class Color {
  * g - green, 0~255
  * b - blue, 0~255
  */
-  hslToRgb(h:number, s:number, l:number) { // 360, 1.0, 1.0
+  hslToRgb(h: number, s: number, l: number) { // 360, 1.0, 1.0
     const h0 = (h % 360 + 360) % 360 / 360;
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
@@ -674,24 +674,24 @@ class Color {
     return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
   };
 
-  hsl2hex([h , s, l ]:number[]) {
-    const rgb = this.hsl2rgb([h , s, l ]);
+  hsl2hex([h, s, l]: number[]) {
+    const rgb = this.hsl2rgb([h, s, l]);
     return this.rgb2hex(rgb);
   }
-  hsl2hsb([h , s, l ]:number[]) {
-    const rgb = this.hsl2rgb([h , s, l ]);
+  hsl2hsb([h, s, l]: number[]) {
+    const rgb = this.hsl2rgb([h, s, l]);
     return this.rgb2hsv(rgb);
   }
-  hsl2hsv([h , s, l ]:number[]) {
-    const rgb = this.hsl2rgb([h , s, l ]);
+  hsl2hsv([h, s, l]: number[]) {
+    const rgb = this.hsl2rgb([h, s, l]);
     return this.rgb2hsv(rgb);
   }
-  hsl2yuv([h , s, l ]:number[]) {
-    const rgb = this.hsl2rgb([h , s, l ]);
+  hsl2yuv([h, s, l]: number[]) {
+    const rgb = this.hsl2rgb([h, s, l]);
     return this.rgb2yuv(rgb);
   }
-  hsl2kelvin([h , s, l ]:number[]) {
-    const rgb = this.yuv2rgb([h , s, l ]);
+  hsl2kelvin([h, s, l]: number[]) {
+    const rgb = this.yuv2rgb([h, s, l]);
     return this.rgb2kelvin(rgb);
   }
 
@@ -736,7 +736,7 @@ class Color {
    * Input: color temperature in degrees Kelvin
    * Output: json object of red, green and blue components of the Kelvin temperature
    */
-   kelvin2rgbUsingTH(kelvin: number) {
+  kelvin2rgbUsingTH(kelvin: number) {
     const temperature = kelvin / 100.0;
     let red;
     let green;
@@ -778,7 +778,7 @@ class Color {
       if (blue > 255) { blue = 255; }
     }
 
-    return [red, green, blue];
+    return [Math.round(red), Math.round(green), Math.round(blue)];
   }
 
   /**
@@ -861,7 +861,7 @@ class Color {
       if (blue > 255) { blue = 255; }
     }
 
-    return [red, green, blue];
+    return [Math.round(red), Math.round(green), Math.round(blue)];
   }
   kelvin2hex(kelvin: number) {
     const rgb = this.kelvin2rgb(kelvin)
@@ -927,11 +927,6 @@ class Color {
     const rgb = this.decode(color).map(item => Math.round(item));
     const [r, g, b] = rgb.map(item => maxIn - item);
     return this.rgb2hex([r, g, b]);
-  }
-
-  hex2RgbString(hex: string, a: number) {
-    const rgb = this.decode(hex);
-    return toRgbString(rgb, a);
   }
 
   hsv2RgbString(h: number, s: number, v: number, a: number) {
