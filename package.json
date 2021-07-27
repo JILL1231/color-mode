@@ -16,7 +16,14 @@
 		"color converter"
 	],
 	"activationEvents": [
-		"onCommand:color-conv.color"
+		"onCommand:color-conv.color",
+		"onCommand:color-conv.hex",
+		"onCommand:color-conv.yuv",
+		"onCommand:color-conv.rgb",
+		"onCommand:color-conv.hsb",
+		"onCommand:color-conv.hsv",
+		"onCommand:color-conv.hsl",
+		"onCommand:color-conv.kelvin"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

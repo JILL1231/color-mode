@@ -7,17 +7,17 @@ import { onChangeColorMode } from './lib';
 export function activate(context: vscode.ExtensionContext) {
 	// 注册颜色
 	let colorCommand = vscode.commands.registerCommand('color-conv.color', () => {
-		
+
 	});
 
 	context.subscriptions.push(colorCommand);
-
-	['hex','yuv','rgb','hsb','hsv','hsl','kelvin'].forEach((mode:string)=>{
-		const colorMOde = vscode.commands.registerCommand(`color-conv.${mode}`,()=>{
-			onChangeColorMode(mode)	
+	// 右键更新选中颜色
+	['hex', 'yuv', 'rgb', 'hsb', 'hsv', 'hsl', 'kelvin'].forEach((mode: string) => {
+		const colorMode = vscode.commands.registerCommand(`color-conv.${mode}`, () => {
+			onChangeColorMode(mode);
 		});
-		context.subscriptions.push(colorMOde)
-	})
+		context.subscriptions.push(colorMode);
+	});
 }
 
 // this method is called when your extension is deactivated

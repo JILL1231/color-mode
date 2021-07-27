@@ -44,8 +44,16 @@ const onChangeColorMode = (toType) => {
             // @ts-ignore
             const colorFormat = color_1.default.color[`${isColorType}2${toType}`](initArgs);
             const result = selectText.replace(selectText, getDressed(toType, colorFormat));
-            editor.edit((editBuilder) => {
-                editBuilder.replace(selections, result);
+            // 编辑
+            editor === null || editor === void 0 ? void 0 : editor.edit((editBuilder) => {
+                // 单选或多选
+                editor === null || editor === void 0 ? void 0 : editor.selections.forEach((sel) => {
+                    const range = sel.isEmpty
+                        ? (editor === null || editor === void 0 ? void 0 : editor.document.getWordRangeAtPosition(sel.start)) || sel
+                        : sel;
+                    const result = selectText.replace(selectText, getDressed(toType, colorFormat));
+                    editBuilder.replace(range, result);
+                });
             });
         }
     }

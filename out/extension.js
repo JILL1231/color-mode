@@ -10,50 +10,14 @@ const lib_1 = require("./lib");
 function activate(context) {
     // 注册颜色
     let colorCommand = vscode.commands.registerCommand('color-conv.color', () => {
-        let editor = vscode.window.activeTextEditor;
-        let selections = getSelections();
-        // 通过选中色值进行转换
-        if (selections === null || selections === void 0 ? void 0 : selections.length) {
-            let selectText = (editor === null || editor === void 0 ? void 0 : editor.document.getText(selections[0])) || '';
-            let isColorType = colorLib.isColorType(selectText);
-            // 选中的文本符合色值的规则
-            if (isColorType) {
-                vscode.window.showQuickPick([
-                    'HEX',
-                    'RGB',
-                    'HSB',
-                    'HSV',
-                    'HSL',
-                    'YUV',
-                    'KELVIN',
-                ], { placeHolder: '选择色彩模式' }).then((res) => {
-                    editor === null || editor === void 0 ? void 0 : editor.edit((editBuilder) => {
-                        editor === null || editor === void 0 ? void 0 : editor.selections.forEach((sel) => {
-                            const range = sel.isEmpty
-                                ? (editor === null || editor === void 0 ? void 0 : editor.document.getWordRangeAtPosition(sel.start)) || sel
-                                : sel;
-                            const toType = (res === null || res === void 0 ? void 0 : res.toLowerCase()) || 'hex';
-                            // 更换前后的色彩模式一致，则返回
-                            if (isColorType === toType) {
-                                return;
-                            }
-                            const initArgs = colorLib.color.decode(selectText);
-                            // @ts-ignore
-                            const colorFormat = colorLib.color[`${isColorType}2${toType}`](initArgs);
-                            const result = selectText.replace(selectText, getDressed(toType, colorFormat));
-                            editBuilder.replace(range, result);
-                        });
-                    });
-                });
-            }
-        }
     });
     context.subscriptions.push(colorCommand);
+    // 右键更新选中颜色
     ['hex', 'yuv', 'rgb', 'hsb', 'hsv', 'hsl', 'kelvin'].forEach((mode) => {
-        const colorMOde = vscode.commands.registerCommand(`color-conv.${mode}`, () => {
+        const colorMode = vscode.commands.registerCommand(`color-conv.${mode}`, () => {
             lib_1.onChangeColorMode(mode);
         });
-        context.subscriptions.push(colorMOde);
+        context.subscriptions.push(colorMode);
     });
 }
 exports.activate = activate;
