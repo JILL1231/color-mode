@@ -24,8 +24,43 @@
 			{
 				"command": "color-conv.color",
 				"category": "Color",
-				"title": "color conv",
-				"icon": "./icon/colorIcon.png"
+				"title": "Color Conv",
+				"icon": "./icons/colorIcon.png"
+			},
+			{
+				"command": "color-conv.hex",
+				"category": "Color",
+				"title": "HEX"
+			},
+			{
+				"command": "color-conv.yuv",
+				"category": "Color",
+				"title": "YUV"
+			},
+			{
+				"command": "color-conv.rgb",
+				"category": "Color",
+				"title": "RGB"
+			},
+			{
+				"command": "color-conv.hsb",
+				"category": "Color",
+				"title": "HSB"
+			},
+			{
+				"command": "color-conv.hsv",
+				"category": "Color",
+				"title": "HSV"
+			},
+			{
+				"command": "color-conv.hsl",
+				"category": "Color",
+				"title": "HSL"
+			},
+			{
+				"command": "color-conv.kelvin",
+				"category": "Color",
+				"title": "KELVIN"
 			}
 		],
 		"keybindings": [
@@ -41,17 +76,51 @@
 				{
 					"when": "editorTextFocus",
 					"command": "color-conv.color",
-					"group": "navigation"
+					"group": "Color"
 				}
 			],
-			"explorer/context": [
+			"editor/context": [
 				{
-					"command": "color-conv.color",
-					"group": "navigation",
-					"when": "editorTextFocus"
+					"group": "2_workspace",
+					"submenu": "color-conv.submenu"
+				}
+			],
+			"color-conv.submenu":[
+				{
+					"command": "color-conv.hex",
+					"group": "2_workspace"
+				},
+				{
+					"command": "color-conv.rgb",
+					"group": "2_workspace"
+				},{
+					"command": "color-conv.hsb",
+					"group": "2_workspace"
+				},
+				{
+					"command": "color-conv.hsv",
+					"group": "2_workspace"
+				},{
+					"command": "color-conv.hsl",
+					"group": "2_workspace"
+				},
+				{
+					"command": "color-conv.yuv",
+					"group": "2_workspace"
+				},
+				{
+					"command": "color-conv.kelvin",
+					"group": "2_workspace"
 				}
 			]
-		}
+		},
+		"submenus": [
+			{
+				"id":"color-conv.submenu",
+				"label": "选择色彩模式"
+			}
+		]
+		
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",

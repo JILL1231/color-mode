@@ -1,4 +1,4 @@
-import { getSelections, getDressed } from './utils';
+import { onChangeColorMode } from './utils';
 import colorLib from './color';
 
-export { getSelections, getDressed, colorLib };
+export { onChangeColorMode,colorLib };

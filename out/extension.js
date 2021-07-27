@@ -11,11 +11,11 @@ function activate(context) {
     // 注册颜色
     let colorCommand = vscode.commands.registerCommand('color-conv.color', () => {
         let editor = vscode.window.activeTextEditor;
-        let selections = lib_1.getSelections();
+        let selections = getSelections();
         // 通过选中色值进行转换
         if (selections === null || selections === void 0 ? void 0 : selections.length) {
             let selectText = (editor === null || editor === void 0 ? void 0 : editor.document.getText(selections[0])) || '';
-            let isColorType = lib_1.colorLib.isColorType(selectText);
+            let isColorType = colorLib.isColorType(selectText);
             // 选中的文本符合色值的规则
             if (isColorType) {
                 vscode.window.showQuickPick([
@@ -37,10 +37,10 @@ function activate(context) {
                             if (isColorType === toType) {
                                 return;
                             }
-                            const initArgs = lib_1.colorLib.color.decode(selectText);
+                            const initArgs = colorLib.color.decode(selectText);
                             // @ts-ignore
-                            const colorFormat = lib_1.colorLib.color[`${isColorType}2${toType}`](initArgs);
-                            const result = selectText.replace(selectText, lib_1.getDressed(toType, colorFormat));
+                            const colorFormat = colorLib.color[`${isColorType}2${toType}`](initArgs);
+                            const result = selectText.replace(selectText, getDressed(toType, colorFormat));
                             editBuilder.replace(range, result);
                         });
                     });
@@ -49,6 +49,12 @@ function activate(context) {
         }
     });
     context.subscriptions.push(colorCommand);
+    ['hex', 'yuv', 'rgb', 'hsb', 'hsv', 'hsl', 'kelvin'].forEach((mode) => {
+        const colorMOde = vscode.commands.registerCommand(`color-conv.${mode}`, () => {
+            lib_1.onChangeColorMode(mode);
+        });
+        context.subscriptions.push(colorMOde);
+    });
 }
 exports.activate = activate;
 // this method is called when your extension is deactivated
