@@ -1,7 +1,8 @@
 {
 	"name": "color-conv",
+	"publisher": "花木",
 	"displayName": "Color Conv",
-	"description": "It is more convenient to change colors",
+	"description": "vscode 中 用于颜色转换的一个插件，支持hex、rgb、hsv、hsl、hsb、yuv 以及 色温 的相互转换",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.58.0"
