@@ -94,7 +94,7 @@ class Color {
     let rgb;
     // 色温
     if (isKelvin(color)) {
-      return color.slice(0, color.length - 1);
+      return [color.slice(0, color.length - 1)];
     }
     // rgba格式
     if (/^(rgba?|hsb|hsv|hsl|yuv)\(/.test(color)) {
@@ -168,9 +168,9 @@ class Color {
     const M = Math.max(r, g, b);
     const m = Math.min(r, g, b);
     const C = M - m;
-    let h;
-    let s;
-    let v;
+    let h = 0;
+    let s = 0;
+    let v = 0;
 
     if (C == 0) { h = 0; }
     else if (M === r) { h = ((g - b) / C) % 6; }
@@ -352,9 +352,9 @@ class Color {
     let r,
       g,
       b,
-      h,
-      s,
-      l,
+      h = 0,
+      s = 0,
+      l = 0,
       min,
       max;
 
@@ -498,9 +498,9 @@ class Color {
  * b - blue, 0~255
  */
   hsvToRgb(h: number, s: number, v: number) {
-    let r,
-      g,
-      b,
+    let r = 0,
+      g = 0,
+      b = 0,
       i,
       f,
       p,
@@ -924,7 +924,7 @@ class Color {
 
   // 反相
   reversed(color: string) {
-    const rgb = this.decode(color).map(item => Math.round(item));
+    const rgb = this.decode(color).map(item => Math.round(+item));
     const [r, g, b] = rgb.map(item => maxIn - item);
     return this.rgb2hex([r, g, b]);
   }
@@ -955,7 +955,7 @@ class Color {
 
 }
 
-const toRgbString = (rgb: number[], a: number) => {
+const toRgbString = (rgb: number[], a: any) => {
   const len = rgb.length;
 
   if (len === 4) {

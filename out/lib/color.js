@@ -416,7 +416,7 @@ class Color {
    * v - Lightness表示亮度
    */
     rgbToHsl([rr, gg, bb]) {
-        let r, g, b, h, s, l, min, max;
+        let r, g, b, h = 0, s, l, min, max;
         r = parseFloat('' + rr) / 255;
         g = parseFloat('' + gg) / 255;
         b = parseFloat('' + bb) / 255;
@@ -561,7 +561,7 @@ class Color {
    * b - blue, 0~255
    */
     hsvToRgb(h, s, v) {
-        let r, g, b, i, f, p, q, t;
+        let r = 0, g = 0, b = 0, i, f, p, q, t;
         // Make sure our arguments stay in-range
         h = Math.max(0, Math.min(360, h));
         s = Math.max(0, Math.min(1, s));
@@ -1018,19 +1018,19 @@ class Color {
         return [random(0, 360), random(0, 100), random(0, 100)];
     }
     // 补色
-    complement(color) {
-        const rgb = this.decode(color).map(item => Math.round(+item));
-        const mm = Math.min(...rgb) + Math.max(...rgb);
-        const [r, g, b] = rgb.map(item => mm - item);
-        const hex = this.rgb2hex([r, g, b]);
-        return hex;
-    }
+    // complement(color: string) {
+    //   const rgb = this.decode(color).map(item => Math.round(+item));
+    //   const mm = Math.min(...rgb) + Math.max(...rgb);
+    //   const [r, g, b] = rgb.map(item => mm - item);
+    //   const hex = this.rgb2hex([r, g, b]);
+    //   return hex;
+    // }
     // 反相
-    reversed(color) {
-        const rgb = this.decode(color).map(item => Math.round(item));
-        const [r, g, b] = rgb.map(item => maxIn - item);
-        return this.rgb2hex([r, g, b]);
-    }
+    // reversed(color: string) {
+    //   const rgb = this.decode(color).map(item => Math.round(item));
+    //   const [r, g, b] = rgb.map(item => maxIn - item);
+    //   return this.rgb2hex([r, g, b]);
+    // }
     hsv2RgbString(h, s, v, a) {
         const [r, g, b, al] = this.hsv2rgb([h, s, v]);
         return toRgbString([r, g, b], al);
@@ -1053,7 +1053,7 @@ class Color {
 const toRgbString = (rgb, a) => {
     const len = rgb.length;
     if (len === 4) {
-        a = rgb.pop();
+        a = rgb.pop() || 0;
     }
     rgb = rgb.map(item => Math.round(item));
     if (len === 4) {

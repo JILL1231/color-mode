@@ -1,9 +1,9 @@
 {
 	"name": "color-conv",
-	"publisher": "花木",
-	"displayName": "Color Conv",
-	"description": "vscode 中 用于颜色转换的一个插件，支持hex、rgb、hsv、hsl、hsb、yuv 以及 色温 的相互转换",
-	"version": "0.0.1",
+	"publisher": "yuyajing",
+	"displayName": "Color Shy",
+	"description": "用于 vscode 中颜色转换的一个插件，支持 hex、rgb、hsv、hsl、hsb、yuv 以及 色温 的相互转换",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.58.0"
 	},
@@ -14,8 +14,11 @@
 		"color",
 		"converter",
 		"color conv",
-		"color converter"
+		"color converter",
+		"color shy",
+		"shy"
 	],
+	"icon": "asserts/icon.png",
 	"activationEvents": [
 		"onCommand:color-conv.color",
 		"onCommand:color-conv.hex",
@@ -27,13 +30,15 @@
 		"onCommand:color-conv.kelvin"
 	],
 	"main": "./out/extension.js",
+	"license": "MIT",
+	"repository": "https://github.com/imlinhanchao/vsc-markdown-image",
 	"contributes": {
 		"commands": [
 			{
 				"command": "color-conv.color",
 				"category": "Color",
 				"title": "Color Conv",
-				"icon": "./icons/colorIcon.png"
+				"icon": "asserts/icon.png"
 			},
 			{
 				"command": "color-conv.hex",
@@ -93,7 +98,7 @@
 					"submenu": "color-conv.submenu"
 				}
 			],
-			"color-conv.submenu":[
+			"color-conv.submenu": [
 				{
 					"command": "color-conv.hex",
 					"group": "2_workspace"
@@ -101,14 +106,16 @@
 				{
 					"command": "color-conv.rgb",
 					"group": "2_workspace"
-				},{
+				},
+				{
 					"command": "color-conv.hsb",
 					"group": "2_workspace"
 				},
 				{
 					"command": "color-conv.hsv",
 					"group": "2_workspace"
-				},{
+				},
+				{
 					"command": "color-conv.hsl",
 					"group": "2_workspace"
 				},
@@ -124,31 +131,33 @@
 		},
 		"submenus": [
 			{
-				"id":"color-conv.submenu",
+				"id": "color-conv.submenu",
 				"label": "选择色彩模式"
 			}
 		]
-		
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
+		"vscode:prepublish": "webpack --mode production",
+		"compile": "webpack --mode none",
+		"watch": "webpack --mode none --watch",
 		"pretest": "yarn run compile && yarn run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.58.0",
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.2.2",
 		"@types/node": "14.x",
-		"eslint": "^7.27.0",
+		"@types/vscode": "^1.58.0",
 		"@typescript-eslint/eslint-plugin": "^4.26.0",
 		"@typescript-eslint/parser": "^4.26.0",
+		"eslint": "^7.27.0",
 		"glob": "^7.1.7",
 		"mocha": "^8.4.0",
+		"ts-loader": "^9.2.4",
 		"typescript": "^4.3.2",
-		"vscode-test": "^1.5.2"
+		"vscode-test": "^1.5.2",
+		"webpack": "^5.47.0",
+		"webpack-cli": "^4.7.2"
 	}
 }

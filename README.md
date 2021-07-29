@@ -5,8 +5,10 @@
 ### 使用方法
 * 选择 色值 文本，右键鼠标以显示 “选择色彩模式“ 选择您所需要的模式，对应的文本会切换为该色值转换后的模式
 
+![选择 色值 文本](asserts/colors.gif)
+
 ### 参与
-有关插件改进的反馈，请在[issues](https://github.com/JILL1231/color-mode/issues)创建问题。
+* 有关插件改进的反馈，请在[issues](https://github.com/JILL1231/color-mode/issues)创建问题。
 
 ### 问题
 * 由于色值之间的转换，计算的倍数本身存在一定的误差，转换过程中四舍五入，可能存在误差
