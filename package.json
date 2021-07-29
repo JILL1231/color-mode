@@ -3,7 +3,7 @@
 	"publisher": "yuyajing",
 	"displayName": "Color Shy",
 	"description": "用于 vscode 中颜色转换的一个插件，支持 hex、rgb、hsv、hsl、hsb、yuv 以及 色温 的相互转换",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"engines": {
 		"vscode": "^1.58.0"
 	},
