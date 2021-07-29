@@ -31,7 +31,7 @@
 	],
 	"main": "./out/extension.js",
 	"license": "MIT",
-	"repository": "https://github.com/imlinhanchao/vsc-markdown-image",
+	"repository": "https://github.com/JILL1231/color-mode",
 	"contributes": {
 		"commands": [
 			{
